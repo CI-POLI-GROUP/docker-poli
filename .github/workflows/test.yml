@@ -1,28 +1,26 @@
-name: Test
+name: Test                                    # Nombre del workflow de GitHub Actions
+on:                                          # Define cuándo se ejecutará el workflow
+  pull_request:                              # Se activa cuando hay un pull request
+    branches:                                # Especifica las ramas que activan el workflow
+      - main                                 # Solo se activa en pull requests hacia main
 
-on:
-  pull_request:
-    branches:
-      - main
+jobs:                                        # Define los trabajos del workflow
+  test:                                      # Nombre del trabajo: "test"
+    runs-on: ubuntu-latest                   # Se ejecuta en la última versión de Ubuntu
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+    steps:                                   # Lista de pasos a ejecutar
+      - name: Checkout code                  # Paso para obtener el código
+        uses: actions/checkout@v3            # Usa la acción checkout de GitHub v3
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Set up Docker                  # Paso para configurar Docker
+        uses: docker/setup-buildx-action@v2  # Usa la acción de Docker Buildx v2
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v2
+      - name: Install Docker Compose         # Paso para instalar Docker Compose
+        run: |                              # Ejecuta los siguientes comandos
+          sudo apt-get update                # Actualiza los paquetes
+          sudo apt-get install -y docker-compose # Instala Docker Compose
 
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
-
-      - name: Build and run tests
-        run: |
-          docker-compose -f docker-compose.yml build
-          docker-compose -f docker-compose.yml run --rm backend sh -c "dotnet test"
-
+      - name: Build and run tests           # Paso para construir y ejecutar pruebas
+        run: |                              # Ejecuta los siguientes comandos
+          docker-compose -f docker-compose.yml build  # Construye los contenedores
+          docker-compose -f docker-compose.yml run --rm backend sh -c "dotnet test"  # Ejecuta las pruebas
