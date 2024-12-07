@@ -1,31 +1,56 @@
+# Define la versión de Docker Compose que se usará
 version: '3.7'
 
+# Define las redes personalizadas que usarán los contenedores
 networks:
   api:
     driver: bridge
 
+# Comienza la definición de los servicios (contenedores)
 services:
  
+    # Configuración del servicio de API backend
     api:
+      # Nombre del contenedor usando una variable de entorno
       container_name: ${ENV_PREFIX}hptel-back-api
+      
+      # Especifica cómo construir la imagen
       build:
+         # Directorio donde está el código fuente
          context: ./hotel-back
+         # Nombre del archivo Dockerfile a usar
          dockerfile: Dockerfile
+      
+      # Mapeo de puertos - conecta el puerto 5005 del contenedor con el 5005 del host
       ports:
         - "5005:5005"
+      
+      # Variables de entorno comentadas (no activas)
       #environment:
       #  - ASPNETCORE_URLS=http://+:5005
       #  - ASPNETCORE_ENVIRONMENT=Development
+      
+      # Archivo con variables de entorno
       env_file:
         - ".env"
+      
+      # Conecta este servicio a la red 'api'
       networks:
         - api
       
+    # Configuración del servicio frontend
     front:
+      # Nombre del contenedor usando una variable de entorno
       container_name: ${ENV_PREFIX}list-hotel-front
+      
+      # Especifica cómo construir la imagen
       build:
+         # Directorio donde está el código fuente
          context: ./hotel-front
+         # Nombre del archivo Dockerfile a usar
          dockerfile: Dockerfile
+      
+      # Mapeo de puertos - conecta el puerto 80 del contenedor con el 80 del host
       ports:
         - "80:80"
       

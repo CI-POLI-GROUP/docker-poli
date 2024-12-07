@@ -1,0 +1,42 @@
+# Nombre del workflow de GitHub Actions
+name: Deploy
+
+# Define cuándo se ejecutará este workflow
+on:
+ push:
+   # Se ejecuta cuando hay un push a la rama main
+   branches:
+     - main
+
+# Define los trabajos que se ejecutarán
+jobs:
+ # Trabajo llamado "deploy"
+ deploy:
+   # Especifica que el trabajo se ejecutará en la última versión de Ubuntu
+   runs-on: ubuntu-latest
+
+   # Lista de pasos a ejecutar en este trabajo
+   steps:
+     # Paso 1: Hace checkout del código del repositorio
+     - name: Checkout code
+       # Usa la acción checkout de GitHub en su versión 3
+       uses: actions/checkout@v3
+
+     # Paso 2: Configura Docker Buildx
+     - name: Set up Docker
+       # Usa la acción de configuración de Docker Buildx en su versión 2
+       uses: docker/setup-buildx-action@v2
+
+     # Paso 3: Instala Docker Compose
+     - name: Install Docker Compose
+       # Ejecuta comandos de shell para instalar Docker Compose
+       run: |
+         sudo apt-get update
+         sudo apt-get install -y docker-compose
+
+     # Paso 4: Construye y ejecuta los contenedores
+     - name: Build and run containers
+       # Ejecuta los comandos de Docker Compose para construir y levantar los contenedores
+       run: |
+         docker-compose -f docker-compose.yml build
+         docker-compose -f docker-compose.yml up -d
